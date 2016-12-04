@@ -11,6 +11,7 @@ before_action :find_book, only: [:show, :edit, :update, :destroy]
 
   def create
     @book = current_user.books.build(book_params)
+    @book.category_id = params[:category_id]
     if @book.save
       redirect_to root_path
     else
@@ -22,10 +23,12 @@ before_action :find_book, only: [:show, :edit, :update, :destroy]
   end
 
   def edit
+    @categories = Category.all.map{ |c| [c.name, c.id] }
   end
 
   def update
-    if book.update(book_params)
+    @book.category_id = params[:category_id]
+    if @book.update(book_params)
       redirect_to book_path(@book)
     else
       render 'edit'
@@ -40,7 +43,7 @@ before_action :find_book, only: [:show, :edit, :update, :destroy]
   private
 
   def book_params
-    params.require(:book).permit(:title, :description, :author)
+    params.require(:book).permit(:title, :description, :author, :category_id)
   end
 
   def find_book
